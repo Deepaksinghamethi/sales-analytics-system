@@ -1,13 +1,37 @@
-def analyze_sales(records):
-    total_qty = 0
-    total_revenue = 0
-    product_wise = {}
+def parse_transactions(raw_lines):
+    """
+    Parses raw lines into clean list of dictionaries
+    """
+    transactions = []
 
-    for r in records:
-        total_qty += r["quantity"]
-        total_revenue += r["revenue"]
+    for line in raw_lines:
+        parts = line.split("|")
 
-        product_wise.setdefault(r["product"], 0)
-        product_wise[r["product"]] += r["revenue"]
+        # skip invalid rows
+        if len(parts) != 8:
+            continue
 
-    return total_qty, total_revenue, product_wise
+        try:
+            quantity = int(parts[4])
+            price = int(parts[5].replace(",", ""))
+
+            if quantity <= 0 or price <= 0:
+                continue
+
+            transaction = {
+                "TransactionID": parts[0],
+                "Date": parts[1],
+                "ProductID": parts[2],
+                "ProductName": parts[3],
+                "Quantity": quantity,
+                "UnitPrice": price,
+                "CustomerID": parts[6],
+                "Region": parts[7]
+            }
+
+            transactions.append(transaction)
+
+        except ValueError:
+            continue
+
+    return transactions
