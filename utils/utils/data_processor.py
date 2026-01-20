@@ -144,4 +144,32 @@ def validate_and_filter(transactions, region=None, min_amount=None, max_amount=N
     )
 
     return sorted_regions
+    def top_selling_products(transactions, n=5):
+    product_data = {}
+
+    for tx in transactions:
+        product = tx["ProductName"]
+        qty = tx["Quantity"]
+        revenue = qty * tx["UnitPrice"]
+
+        if product not in product_data:
+            product_data[product] = {
+                "quantity": 0,
+                "revenue": 0
+            }
+
+        product_data[product]["quantity"] += qty
+        product_data[product]["revenue"] += revenue
+
+    # Convert to list of tuples
+    product_list = [
+        (product, data["quantity"], data["revenue"])
+        for product, data in product_data.items()
+    ]
+
+    # Sort by quantity descending
+    product_list.sort(key=lambda x: x[1], reverse=True)
+
+    return product_list[:n]
+
 
