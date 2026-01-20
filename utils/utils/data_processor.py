@@ -171,5 +171,32 @@ def validate_and_filter(transactions, region=None, min_amount=None, max_amount=N
     product_list.sort(key=lambda x: x[1], reverse=True)
 
     return product_list[:n]
+    def customer_analysis(transactions):
+    """
+    Analyzes customer purchase patterns
+
+    Returns: dictionary of customer statistics
+
+    Expected Output Format:
+    {
+        'C001': {
+            'total_spent': 95000.0,
+            'purchase_count': 3,
+            'avg_order_value': 31666.67,
+            'products_bought': ['Laptop', 'Mouse', 'Keyboard']
+        },
+        'C002': {...},
+        ...
+    }
+
+    Requirements:
+    - Calculate total amount spent per customer
+    - Count number of purchases
+    - Calculate average order value
+    - List unique products bought
+    - Sort by total_spent descending
+    """
+
+
 
 
