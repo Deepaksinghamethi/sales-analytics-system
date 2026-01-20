@@ -107,3 +107,41 @@ def validate_and_filter(transactions, region=None, min_amount=None, max_amount=N
     summary["final_count"] = len(valid_transactions)
 
     return valid_transactions, invalid_count, summary
+    def region_wise_sales(transactions):
+    region_data = {}
+    total_sales_all = 0
+
+    # Calculate total sales per region
+    for tx in transactions:
+        region = tx["Region"]
+        amount = tx["Quantity"] * tx["UnitPrice"]
+
+        total_sales_all += amount
+
+        if region not in region_data:
+            region_data[region] = {
+                "total_sales": 0,
+                "transaction_count": 0
+            }
+
+        region_data[region]["total_sales"] += amount
+        region_data[region]["transaction_count"] += 1
+
+    # Add percentage
+    for region in region_data:
+        sales = region_data[region]["total_sales"]
+        region_data[region]["percentage"] = round(
+            (sales / total_sales_all) * 100, 2
+        )
+
+    # Sort by total_sales descending
+    sorted_regions = dict(
+        sorted(
+            region_data.items(),
+            key=lambda x: x[1]["total_sales"],
+            reverse=True
+        )
+    )
+
+    return sorted_regions
+
