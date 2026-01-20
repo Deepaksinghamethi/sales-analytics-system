@@ -1,0 +1,1 @@
+print("Sales Analytics System")
