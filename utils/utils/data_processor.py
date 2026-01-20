@@ -196,6 +196,85 @@ def validate_and_filter(transactions, region=None, min_amount=None, max_amount=N
     - List unique products bought
     - Sort by total_spent descending
     """
+def daily_sales_trend(transactions):
+    daily_data = {}
+
+    for tx in transactions:
+        date = tx["Date"]
+        amount = tx["Quantity"] * tx["UnitPrice"]
+        customer = tx["CustomerID"]
+
+        if date not in daily_data:
+            daily_data[date] = {
+                "revenue": 0,
+                "transaction_count": 0,
+                "customers": set()
+            }
+
+        daily_data[date]["revenue"] += amount
+        daily_data[date]["transaction_count"] += 1
+        daily_data[date]["customers"].add(customer)
+
+    # Final format + unique customers count
+    result = {}
+    for date in sorted(daily_data.keys()):
+        result[date] = {
+            "revenue": daily_data[date]["revenue"],
+            "transaction_count": daily_data[date]["transaction_count"],
+            "unique_customers": len(daily_data[date]["customers"])
+        }
+
+    return result
+def find_peak_sales_day(transactions):
+    daily = {}
+
+    for tx in transactions:
+        date = tx["Date"]
+        amount = tx["Quantity"] * tx["UnitPrice"]
+
+        if date not in daily:
+            daily[date] = {"revenue": 0, "count": 0}
+
+        daily[date]["revenue"] += amount
+        daily[date]["count"] += 1
+
+    peak_date = None
+    max_revenue = 0
+    peak_count = 0
+
+    for date, data in daily.items():
+        if data["revenue"] > max_revenue:
+            max_revenue = data["revenue"]
+            peak_date = date
+            peak_count = data["count"]
+
+    return peak_date, max_revenue, peak_count
+def low_performing_products(transactions, threshold=10):
+    product_data = {}
+
+    for tx in transactions:
+        product = tx["ProductName"]
+        qty = tx["Quantity"]
+        revenue = qty * tx["UnitPrice"]
+
+        if product not in product_data:
+            product_data[product] = {
+                "quantity": 0,
+                "revenue": 0
+            }
+
+        product_data[product]["quantity"] += qty
+        product_data[product]["revenue"] += revenue
+
+    low_products = []
+
+    for product, data in product_data.items():
+        if data["quantity"] < threshold:
+            low_products.append(
+                (product, data["quantity"], data["revenue"])
+            )
+
+    return low_products
 
 
 
